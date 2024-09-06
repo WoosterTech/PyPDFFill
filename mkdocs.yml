@@ -1,0 +1,20 @@
+site_name: PyPDFFill
+
+theme:
+  name: "material"
+
+plugins:
+  - include-markdown
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_root_heading: true
+            extensions:
+              - griffe_fieldz
+
+nav:
+  - Home: index.md
+  - Code Reference:
+    - mappers.md
