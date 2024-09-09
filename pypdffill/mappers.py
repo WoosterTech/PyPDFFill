@@ -1,9 +1,82 @@
 """Module to map a PDF form to a Pydantic model.
 
-This module provides a class to map a PDF form to a Pydantic model. The
-`PdfForm` class is used to map the fields of a PDF form to a Pydantic
-model. The class can be used to generate a Pydantic model from the fields of a
-PDF form and to generate a filled PDF form from a Pydantic model."""
+The `PdfForm` class is used to map the fields of a PDF form to a Pydantic
+model. Use the `FieldMapper` class to map a field in the PDF form to a Pydantic
+model.
+
+Example:
+
+Given a Pydantic model:
+```python
+from pydantic import BaseModel
+
+
+class Form8962(BaseModel):
+    name: str
+    ssn: str
+    modified_agi: int
+```
+
+and a PDF with the following fields:
+
+- Name: f1_1[0]
+- SSN: f1_2[0]
+- Modified AGI: f1_3[0]
+
+You can map the fields to the Pydantic model using the `FieldMapper` class:
+```python
+from pypdffill.mappers import FieldMapper
+
+name_field = FieldMapper(
+    field_name="name",
+    widget_type="text",
+    widget_name="f1_1[0]",
+)
+
+ssn_field = FieldMapper(
+    field_name="ssn",
+    widget_type="text",
+    widget_name="f1_2[0]",
+)
+
+modified_agi_field = FieldMapper(
+    field_name="modified_agi",
+    widget_type="text",
+    widget_name="f1_3[0]",
+)
+```
+
+Then, you can map the PDF form to the Pydantic model using the `PdfForm` class:
+```python
+from pypdffill.mappers import PdfForm
+
+form = PdfForm(
+    name="Form8962",
+    fields=[name_field, ssn_field, modified_agi_field],
+    blank_pdf_path="tests/samples/f8962.pdf",
+)
+```
+
+The `form` attribute of the `PdfForm` class is the Pydantic model generated from
+the PDF form used to populate the PDF.
+
+You can generate a filled PDF form using the `generate_pdf` method:
+```python
+from tests.models import Form8962
+
+sample_fill = Form8962(
+    name="John Doe",
+    ssn="123-45-6789",
+    modified_agi=10000,
+)
+
+filled_form_model = form.model_validate(sample_fill.model_dump())
+
+form.generate_pdf(form=filled_form_model, output_path="filled_form.pdf")
+
+# The filled PDF form is saved to "filled_form.pdf"
+```
+"""
 
 from pathlib import Path
 from typing import Literal

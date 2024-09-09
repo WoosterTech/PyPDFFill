@@ -6,7 +6,7 @@ from pypdffill.mappers import FieldMapper, PdfForm
 from tests.models import Form8962
 
 
-@pytest.fixture()
+@pytest.fixture
 def sample_fill():
     return Form8962(
         name="John Doe",
@@ -18,7 +18,7 @@ def sample_fill():
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 def mapper():
     return PdfForm(
         name="TestForm",
